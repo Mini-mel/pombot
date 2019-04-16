@@ -1,0 +1,5 @@
+#config files
+
+config.json
+.env
+.DS_Store
