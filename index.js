@@ -1,17 +1,17 @@
 const {token} = require('./config.json');
-const Eris = require('eris');
-const bot = new Eris(token);
+const Discord = require('discord.js');
+const bot = new Discord.Client();
 
 bot.on('ready', () => {
     console.log("ready!");
 });
 
-bot.on('messageCreate', (msg) => {
-    // Our bot needs to know if it will execute a command
-    // It will listen for messages that will start with `!`
+bot.on('message', (msg) => {
+    //checks for hello command and responds with "world!"
     if (msg.content == "!hello"){
-        bot.createMessage(msg.channel.id, "world!");
+        msg.reply("world!");
     }
 });
 
-bot.connect();
+bot.login(token);
+
