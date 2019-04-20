@@ -14,10 +14,18 @@ bot.on('message', (msg) => {
     }
     
     //starts timer, then when timer ends, edits its message
-    if (msg.content == "starttime"){
-        msg.channel.send("Start!").then((msg)=>{
-            setTimeout(function(){msg.edit("Completed!");}, 3000)
-       });
+    if (msg.content == "time"){
+        msg.channel.send("Start!")
+            .then((msg)=>{
+                setTimeout(() => function(){msg.edit("Completed!");}, 3000)
+           
+            }) 
+            .catch(error => console.log(error));
+    }
+
+    if(msg.content == "Gui"){
+        msg.channel.send("message");
+
     }
 });
 
