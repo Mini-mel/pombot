@@ -17,9 +17,9 @@ bot.on('message', (msg) => {
     if (msg.content == "time"){
         msg.channel.send("Start!")
             .then((msg)=>{
-                setTimeout(() => function(){msg.edit("Completed!");}, 3000)
+                setTimeout(function(){msg.edit("Completed!");}, 3000)
            
-            }) 
+            })
             .catch(error => console.log(error));
     }
 
