@@ -16,11 +16,16 @@ bot.on('message', (msg) => {
     //starts timer, then when timer ends, edits its message
     if (msg.content == "time"){
         msg.channel.send("Start!")
-            .then((msg)=>{
-                setTimeout(function(){msg.edit("Completed!");}, 3000)
-           
-            })
-            .catch(error => console.log(error));
+        .then(sentmsg => {
+            //after 3000 seconds, bot edits message, 
+            //and after 1000 ms, bot deletes its own message
+            setTimeout(function(){
+                sentmsg.edit("Completed!")
+                .then(sentmsg => sentmsg.delete(1000))
+                .catch(error => console.log(error));
+            }, 3000)
+        })
+        .catch(error => console.log(error));
     }
 
     if(msg.content == "Gui"){
