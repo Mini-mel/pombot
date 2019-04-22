@@ -19,6 +19,7 @@ function endTimer(sentmsg)
 
 bot.on('ready', () => {
    console.log("Ready!");
+   bot.user.setActivity("you succeed", {type:"WATCHING"});
 });
 
 bot.on('message', (msg) => {
