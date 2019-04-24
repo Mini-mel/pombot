@@ -5,6 +5,7 @@ var interval;
 var i = 0;
 var fiveminutes = 300000;   //number of miliseconds in 5 minutes
 var oneminute = 60000;
+var timerchannelid = "570375164580331520" //for test server - change as necessary
 
 function displayRemaining(sentmsg)
 {
@@ -34,7 +35,7 @@ bot.on('message', (msg) => {
 
     //starts timer, then when timer ends, edits its message
     if (msg.content == "time"){
-        msg.channel.send("Start!")
+        msg.guild.channels.get(timerchannelid).send("Start!")
         //every 20s, bot edits message, 
         //and after timer is done, bot deletes its own message
         .then(sentmsg => {
