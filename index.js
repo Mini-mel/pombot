@@ -6,8 +6,10 @@ var interval;
 var i = 0;
 var fiveminutes = 300000;   //number of miliseconds in 5 minutes
 var twentyfivem = 1500000;
-var oneminute = 60000;
+var fiveseconds = 5000;
+var refreshrate = 20000; 
 var minutes;
+var endtimermessage = "Time for break!";
 var timerchannelid = "570375164580331520" //for test server - change as necessary
 
 
@@ -34,7 +36,7 @@ bot.on('ready', () => {
 });
 
 bot.on('message', (msg) => {
-    minutes = oneminute;
+    minutes = fiveseconds;
 
     //starts timer, then when timer ends, edits its message
     if (msg.content == "time"){
@@ -46,14 +48,24 @@ bot.on('message', (msg) => {
         .then(sentmsg => {
             sentmsg.react("✅").catch(error => console.log(error));
             const filter = (reaction, user) => reaction.emoji.name === '✅' && user.id === sentmsg.author.id;
+            
             sentmsg.awaitReactions(filter, {time: minutes})
             .then(collected => {
-                msg.channel.send("<@" + collected.first().users.last().id + ">");
-            }).catch(error => console.log(error));
+                //loop through each user and add to string
+                collected.first().users.forEach(function (collecteduser){
+                    if (!collecteduser.bot) {
+                        endtimermessage = endtimermessage + " <@" + collecteduser.id + ">";
+                    }
+                });
+            })
+            .then(() => {
+                msg.channel.send(endtimermessage);
+            })
+            .catch(error => console.log(error));
 
             i=(minutes / 1000);
             sentmsg.edit(timerPrint()); //rename timer to timerToString?
-            interval = setInterval(displayRemaining.bind(null, sentmsg), 20000);
+            interval = setInterval(displayRemaining.bind(null, sentmsg), refreshrate);
 
             setTimeout(endTimer.bind(null, sentmsg), minutes);
         })
