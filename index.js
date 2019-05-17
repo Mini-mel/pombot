@@ -4,19 +4,21 @@ const bot = new Discord.Client();
 
 var interval;
 var i = 0;
-var fiveminutes = 300000;   //number of miliseconds in 5 minutes
-var twentyfivem = 1500000;
-var fiveseconds = 5000;
-var refreshrate = 20000; 
+var fiveminutes = 4999 //300000;   //number of miliseconds in 5 minutes
+var twentyfive = 5000 //1500000;
+var refreshrate = 20000;
 var minutes;
-var humans;
-var endtimermessage = "Time for break!";
+var endpommessage = "Time for break!";
+var endbreakmessage = "Back to work!";
 var timerchannelid = "570375164580331520" //for test server - change as necessary
+var usersthisround;
+var queuefornextround;
+var onBreak;
 
 
 function displayRemaining(sentmsg)
 {
-    i=i-20;
+    i=i-(refreshrate/1000); //conversion to seconds for display
     sentmsg.edit(timerToString());
 }
 
@@ -27,13 +29,12 @@ function timerToString(){
 function endTimer(sentmsg)
 {
     clearInterval(interval);
-    console.log("done");
     sentmsg.delete();
 }
 
-function pomtimer(msg, sentmsg)
+function timerManager(sentmsg)
 {
-    //i is the timer length converted from ms to s
+    //timer length converted from ms to s
     i=(minutes / 1000);
     //edits original message with time remaining
     sentmsg.edit(timerToString());
@@ -43,53 +44,73 @@ function pomtimer(msg, sentmsg)
     setTimeout(endTimer.bind(null, sentmsg), minutes);
 }
 
+function addToEnd(arrayofids, endmessage){
+    arrayofids.forEach(function (userid){
+        endmessage = endmessage + " <@" + userid + ">";
+    });
+    return endmessage;
+}
 
 //---------Get users who react with checkmark and mention them when timer is over-----------
 function collectReactions(msg, sentmsg){
-    humans = 0;
     sentmsg.react("✅").catch(error => console.log(error));
-    //filter is: users reacting with checkmark
+
+    //collect users who react with checkmark
     const filter = (reaction, user) => reaction.emoji.name === '✅' && user.id === sentmsg.author.id;
-    
-    //wait for people to react until timer is up
     sentmsg.awaitReactions(filter, {time: minutes})
     .then(collected => {
-        //loop through each participating user
-        collected.first().users.forEach(function (collecteduser){
-            //if user is not bot, mention them in the end timer message
-            if (!collecteduser.bot) {
-                endtimermessage = endtimermessage + " <@" + collecteduser.id + ">";
-                humans++;
-            }
-        });
+        if (onBreak){
+            endbreakmessage = addToEnd(usersthisround, endbreakmessage);
+            endbreakmessage = addToEnd(queuefornextround, endbreakmessage);
+            usersthisround = [];
+            queuefornextround = [];
+
+            collected.first().users.forEach(function (collecteduser){
+                if (!collecteduser.bot) {
+                    queuefornextround.push(collecteduser.id);
+                }
+            });
+        } else {
+            collected.first().users.forEach(function (collecteduser){
+                //if user is not bot, mention them in the end timer message
+                if (!collecteduser.bot) {
+                    endpommessage = endpommessage + " <@" + collecteduser.id + ">";
+                    usersthisround.push(collecteduser.id);
+                }
+            });
+            
+            endpommessage = addToEnd(queuefornextround, endpommessage);
+        }
     })
     .then(() => {
         //send the end timer message in the original channel
-        if (humans != 0){
-            msg.channel.send(endtimermessage);
+        if (onBreak){
+            msg.channel.send(endbreakmessage);
+            minutes = twentyfive;
+            onBreak = false;
+        } else {
+            msg.channel.send(endpommessage);
+            minutes = fiveminutes;
+            onBreak = true;
+        }
+    }).then(() => {
+        endbreakmessage = "Back to work!";
+        endpommessage = "Time for break!";
+        console.log("done");
+        if (!(usersthisround === undefined || usersthisround === null || usersthisround.length == 0) 
+        || !(queuefornextround === undefined || queuefornextround === null || queuefornextround.length == 0)){
             runPomTimer(msg);
         }
     })
     .catch(error => console.log(error));
 
 }
-//NEXT! Mention users who were on break but didn't sign up for next one
-//add embed that explains how it works (reactions and stuff)
-//add embed that explains that it refreshes every 20 seconds and that it will @notify/mention you when time is up
+
 function runPomTimer(msg){
     msg.guild.channels.get(timerchannelid).send("Start!")
-    //every 20s, bot edits message and after timer is done, bot deletes its own message
-    //bot reacts to its own timer with a checkmark.
     .then(sentmsg => {
-        pomtimer(msg, sentmsg);
+        timerManager(sentmsg);
         collectReactions(msg, sentmsg);
-    })
-    .then(() => {
-        if (minutes == twentyfivem){
-            minutes = fiveminutes;
-        } else {
-            minutes = twentyfivem;
-        };
     })
     .catch(error => console.log(error));
 }
@@ -100,10 +121,11 @@ bot.on('ready', () => {
 });
 
 bot.on('message', (msg) => {
-
-    //starts timer, then when timer ends, edits its message
     if (msg.content == "time"){
-        minutes = twentyfivem;  //timer length
+        usersthisround = [];
+        queuefornextround = [];
+        onBreak = false;
+        minutes = twentyfive;
         runPomTimer(msg);
     }
 });
