@@ -16,7 +16,7 @@ const MasterEmbed = new Discord.RichEmbed()
 var interval;
 var i = 0;
 var fiveminutes = 300000;   //number of miliseconds in 5 minutes
-var twentyfive = 1500000;
+var twentyfive = 5000; //1500000;
 var refreshrate = 20000;
 var minutes;
 var endpommessage = "Time for break!";
@@ -25,6 +25,7 @@ var timerchannelid = "570375164580331520" //for test server - change as necessar
 var usersthisround;
 var queuefornextround;
 var onBreak;
+var TimerGoing;
 
 
 function displayRemaining(sentmsg)
@@ -38,12 +39,6 @@ function timerToString(){
     return "```\n" + Math.floor(i / 60) + " Minutes " + (i % 60) + " Seconds Remaining" + "```";
 }
 
-function endTimer(sentmsg)
-{
-    clearInterval(interval);
-    sentmsg.delete();
-}
-
 function timerManager(sentmsg)
 {
     //timer length converted from ms to s
@@ -54,7 +49,10 @@ function timerManager(sentmsg)
                 
     //updates timer message every =refresh rate= number of seconds with current time remaining
     interval = setInterval(displayRemaining.bind(null, sentmsg), refreshrate);
-    setTimeout(endTimer.bind(null, sentmsg), minutes);
+    setTimeout(() => {
+        clearInterval(interval);
+        sentmsg.delete();
+    }, minutes);
 }
 
 function addToEnd(arrayofids, endmessage){
@@ -113,6 +111,8 @@ function collectReactions(msg, sentmsg){
         if (!(usersthisround === undefined || usersthisround === null || usersthisround.length == 0) 
         || !(queuefornextround === undefined || queuefornextround === null || queuefornextround.length == 0)){
             runPomTimer(msg);
+        } else {
+            TimerGoing = false;
         }
     })
     .catch(error => console.log(error));
@@ -120,6 +120,7 @@ function collectReactions(msg, sentmsg){
 }
 
 function runPomTimer(msg){
+    TimerGoing = true;
     msg.guild.channels.get(timerchannelid).send(MasterEmbed)
     .then(sentmsg => {
         timerManager(sentmsg);
@@ -131,15 +132,20 @@ function runPomTimer(msg){
 bot.on('ready', () => {
    console.log("Ready!");
    bot.user.setActivity("you succeed!", {type:"WATCHING"});
+   TimerGoing = false;
 });
 
 bot.on('message', (msg) => {
-    if (msg.content == "time"){
-        usersthisround = [];
-        queuefornextround = [];
-        onBreak = false;
-        minutes = twentyfive;
-        runPomTimer(msg);
+    if (msg.content == "!time"){
+        if (!TimerGoing){
+            usersthisround = [];
+            queuefornextround = [];
+            onBreak = false;
+            minutes = twentyfive;
+            runPomTimer(msg);
+        } else {
+            msg.channel.send("A timer has already been started!");
+        }
     }
 });
 
