@@ -1,11 +1,22 @@
 const {token} = require('./config.json');
 const Discord = require('discord.js');
 const bot = new Discord.Client();
+const MasterEmbed = new Discord.RichEmbed()
+    .setTitle('**Pom Timer**')
+    .setColor(14177041)
+    .setTimestamp()
+    .addField("What is a pom?",
+        "A pom, pomodoro, or 🍅 is 25 minutes of focused work followed by 5 minutes of break.")
+    .addField("How this works!", "Join in by clicking the ✅ below! If we're on break, you'll"
+        + "be added to the next pom.")
+    .addField("Why isn't the timer moving?",
+        "To avoid overusing internet resources, this message only refreshes every 20 seconds," +
+        "but don't worry! We'll @mention you when it's done!");
 
 var interval;
 var i = 0;
-var fiveminutes = 4999 //300000;   //number of miliseconds in 5 minutes
-var twentyfive = 5000 //1500000;
+var fiveminutes = 300000;   //number of miliseconds in 5 minutes
+var twentyfive = 1500000;
 var refreshrate = 20000;
 var minutes;
 var endpommessage = "Time for break!";
@@ -19,11 +30,12 @@ var onBreak;
 function displayRemaining(sentmsg)
 {
     i=i-(refreshrate/1000); //conversion to seconds for display
-    sentmsg.edit(timerToString());
+    //edits original message with time remaining
+    sentmsg.edit(new Discord.RichEmbed(sentmsg.embeds[0]).setTimestamp().setDescription(timerToString()));
 }
 
 function timerToString(){
-    return Math.floor(i / 60) + " Minutes " + (i % 60) + " Seconds Remaining";
+    return "```\n" + Math.floor(i / 60) + " Minutes " + (i % 60) + " Seconds Remaining" + "```";
 }
 
 function endTimer(sentmsg)
@@ -36,8 +48,9 @@ function timerManager(sentmsg)
 {
     //timer length converted from ms to s
     i=(minutes / 1000);
-    //edits original message with time remaining
-    sentmsg.edit(timerToString());
+
+    //edits original message with initialized time remaining value
+    sentmsg.edit(new Discord.RichEmbed(sentmsg.embeds[0]).setDescription(timerToString()).setThumbnail(bot.user.avatarURL));
                 
     //updates timer message every =refresh rate= number of seconds with current time remaining
     interval = setInterval(displayRemaining.bind(null, sentmsg), refreshrate);
@@ -107,7 +120,7 @@ function collectReactions(msg, sentmsg){
 }
 
 function runPomTimer(msg){
-    msg.guild.channels.get(timerchannelid).send("Start!")
+    msg.guild.channels.get(timerchannelid).send(MasterEmbed)
     .then(sentmsg => {
         timerManager(sentmsg);
         collectReactions(msg, sentmsg);
