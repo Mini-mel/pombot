@@ -8,10 +8,10 @@ const MasterEmbed = new Discord.RichEmbed()
     .addField("What is a pom?",
         "A pom, pomodoro, or 🍅 is 25 minutes of focused work followed by 5 minutes of break.")
     .addField("How this works!", "Join in by clicking the ✅ below! If we're on break, you'll"
-        + "be added to the next pom.")
+        + " be added to the next pom.")
     .addField("Why isn't the timer moving?",
         "To avoid overusing internet resources, this message only refreshes every 20 seconds," +
-        "but don't worry! We'll @mention you when it's done!");
+        " but don't worry! We'll @mention you when it's done!");
 
 var interval;
 var i = 0;
