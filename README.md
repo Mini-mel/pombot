@@ -6,17 +6,23 @@ This is a pom timer for discord. A pomodoro is 25 minutes of focused work follow
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See deployment for notes on how to deploy the project on a live system.
 
-### Prerequisites
+### Prerequesites
 
-(Coming soon)
+Node
+Git
+discordjs
 
 ### Installing
 
-(Coming soon)
+1. Install dependencies
+2. Clone this repo
+3. "cd pombot" to get into the right place
+4. run the bot with the command "node index.js"
 
 ### Deployment
 
-(Coming Soon)
+Here's the invite. https://discordapp.com/api/oauth2/authorize?client_id=567463917446758400&permissions=2112&scope=bot
+Note: Anyone can start a timer.
 
 ## Built With
 
