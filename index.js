@@ -1,4 +1,5 @@
 const {token} = require('./config.json');
+var {timerchannelID} = require('./config.json');
 const Discord = require('discord.js');
 const bot = new Discord.Client();
 const MasterEmbed = new Discord.RichEmbed()
@@ -16,12 +17,11 @@ const MasterEmbed = new Discord.RichEmbed()
 var interval;
 var i = 0;
 var fiveminutes = 300000;   //number of miliseconds in 5 minutes
-var twentyfive = 5000; //1500000;
+var twentyfive = 1500000;
 var refreshrate = 20000;
 var minutes;
 var endpommessage = "Time for break!";
 var endbreakmessage = "Back to work!";
-var timerchannelid = "570375164580331520" //for test server - change as necessary
 var usersthisround;
 var queuefornextround;
 var onBreak;
@@ -121,7 +121,11 @@ function collectReactions(msg, sentmsg){
 
 function runPomTimer(msg){
     TimerGoing = true;
-    msg.guild.channels.get(timerchannelid).send(MasterEmbed)
+    //if config is not set up, timerchannelID is the channel commands are sent from.
+    if (timerchannelID == null || timerchannelID == undefined || timerchannelID == ""){
+        timerchannelID = msg.channel.id;
+    } 
+    msg.guild.channels.get(timerchannelID).send(MasterEmbed)
     .then(sentmsg => {
         timerManager(sentmsg);
         collectReactions(msg, sentmsg);
