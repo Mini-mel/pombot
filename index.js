@@ -1,4 +1,5 @@
 const {token} = require('./config.json');
+var {timerchannelID} = require('./config.json');
 const Discord = require('discord.js');
 const bot = new Discord.Client();
 const MasterEmbed = new Discord.RichEmbed()
@@ -120,8 +121,11 @@ function collectReactions(msg, sentmsg){
 
 function runPomTimer(msg){
     TimerGoing = true;
-    
-    msg.channel.send(MasterEmbed)
+    //if config is not set up, timerchannelID is the channel commands are sent from.
+    if (timerchannelID == null || timerchannelID == undefined || timerchannelID == ""){
+        timerchannelID = msg.channel.id;
+    } 
+    msg.guild.channels.get(timerchannelID).send(MasterEmbed)
     .then(sentmsg => {
         timerManager(sentmsg);
         collectReactions(msg, sentmsg);
