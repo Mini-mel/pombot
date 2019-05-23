@@ -4,14 +4,9 @@ This is a pom timer for discord. A pomodoro is 25 minutes of focused work follow
 
 ## Getting Started
 
-### Prerequisites
-
-Node
-Discord.js
-
 ### Installing
 
-1. Install dependencies
+1. Install Node and Discord.js
 2. Clone this repo
 3. Use the terminal command ```cd pombot``` to get into the right directory
 3. Create a file called config.json
