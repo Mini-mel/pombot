@@ -1,4 +1,4 @@
-# Pom Timer (The Pom Jester)
+# Pom Timer
 
 This is a pom timer for discord. A pomodoro is 25 minutes of focused work followed by 5 minutes of break. Sometimes there are 15 minute breaks for every four done, but this timer just does 25 and 5. It responds to a !time command, opens an embed that serves as the timer, reacts to it with the green checkmark, then when the timer is finished, it sends a message to the channel it was summoned from, @ mentioning all who joined by reacting with the green checkmark. The bot deletes the finished embed timer. If there are people in the queue for the next pom, it starts a new timer.
 
