@@ -13,10 +13,11 @@ Discord.js
 
 1. Install dependencies
 2. Clone this repo
-3. use the terminal command ```cd pombot``` to get into the right directory
+3. Use the terminal command ```cd pombot``` to get into the right directory
 3. Create a file called config.json
   a. Copy this into the file
-```{
+```
+   {
     "token":"yourToken"
     "timerchannelID": ""
    }
