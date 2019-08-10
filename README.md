@@ -31,6 +31,5 @@ Note: Anyone can start a timer by default.
 
 ## Acknowledgments
 
-* https://charat.me/profile/ - for making Pom Jester's icon
 * https://leovoel.github.io/embed-visualizer/ - for planning out embed format in discord
 * https://gist.github.com/PurpleBooth/109311bb0361f32d87a2#file-readme-template-md - for the readme looking swell
